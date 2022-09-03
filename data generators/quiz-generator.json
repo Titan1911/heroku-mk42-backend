@@ -1,0 +1,26 @@
+[
+  '{{repeat(10)}}',
+  {
+    title:'CIE-1',
+    questions: [
+      '{{repeat(5)}}',
+      {
+        question:'{{lorem(10,"words")}}?',
+        options:[
+          '{{repeat(4)}}',
+          '{{lorem(1,"words")}}'
+        ]
+      }
+    ],
+    correctAnswers: function(tags){
+      var res = [];
+      for(i=0;i<5;i++){
+        var r = tags.integer(0,3);
+        res.push(this.questions[i].options[r]);
+      }
+      return res;
+    },
+    maxMarks: 5,
+    timeLimit: 10
+  }
+]
