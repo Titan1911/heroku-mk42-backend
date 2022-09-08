@@ -3,7 +3,8 @@ const router = express.Router();
 const userModel = require('../schemas/userSchema')
 const { deptModel } = require('../schemas/academicSchema')
 const bcrypt = require('bcrypt')
-const salt = process.env.SALT
+const dotenv = require('dotenv').config()
+const saltSize = process.env.SALT_SIZE
 const crypto = require('crypto')
 
 router.get('/', (req, res) => {
@@ -11,6 +12,7 @@ router.get('/', (req, res) => {
 })
 
 router.post('/add-user', async (req, res) => {
+
     const userData = req.body
     const addingData = {
         email: userData.email,
@@ -19,7 +21,7 @@ router.post('/add-user', async (req, res) => {
         lastName: userData.lastName,
         authToken: '',
     }
-    // console.log(userData)
+    console.log(userData)
     const email = userData.email
     const password = userData.password
     const found = await userModel.find({ email: email }).exec()
@@ -29,7 +31,10 @@ router.post('/add-user', async (req, res) => {
     }
     else {
         try {
-            const hashedPwd = await bcrypt.hash(password, salt);
+            // console.log("data is" + password + " salt is :" + saltSize)
+            // console.log(parseInt(salt))
+            const salt = await bcrypt.genSalt(saltSize)
+            const hashedPwd = await bcrypt.hash(password, salt)
             addingData.password = hashedPwd
             const token = crypto.randomBytes(32).toString('hex')
             addingData.authToken = token
