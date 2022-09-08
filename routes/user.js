@@ -26,14 +26,14 @@ router.post('/add-user', async (req, res) => {
     const password = userData.password
     const found = await userModel.find({ email: email }).exec()
     if (found.length !== 0) {
-        // console.log("u already exists just login not signup")
+        console.log("u already exists just login not signup")
         res.send("user already exists")
     }
     else {
         try {
-            // console.log("data is" + password + " salt is :" + saltSize)
-            // console.log(parseInt(salt))
-            const salt = await bcrypt.genSalt(saltSize)
+            console.log("data is" + password + " salt is :" + saltSize)
+            console.log(parseInt(saltSize))
+            const salt = await bcrypt.genSalt(parseInt(saltSize))
             const hashedPwd = await bcrypt.hash(password, salt)
             addingData.password = hashedPwd
             const token = crypto.randomBytes(32).toString('hex')
@@ -41,10 +41,10 @@ router.post('/add-user', async (req, res) => {
             const newUser = new userModel(addingData)
             await newUser.save()
             res.send(token)
-            // console.log('Registration Successful!')
+            console.log('Registration Successful!')
         }
         catch (err) {
-            // console.log(err)
+            console.log(err)
         }
     }
 })
@@ -84,8 +84,8 @@ router.post('/add-user-data', async (req, res) => {
     try {
         const user = await userModel.findOne({ authToken: token }).exec()
         const dept = await deptModel.findOne({ departmentCode: additionalData.department }).exec()
-        // console.log(token)
-        // console.log("the user is : " + user)
+        console.log(token)
+        console.log("the user is : " + user)
         const academicDetails = await academicModel.findOne({ department: dept._id })
         additionalData.academicDetails = academicDetails
         const userinstance = await userModel.updateOne({ _id: user._id }, additionalData)
@@ -122,7 +122,7 @@ router.get('/authenticate', authenticate, async (req, res) => {
 
 async function authenticate(req, res, next) {
     const token = req.header('x-access-token')
-    // console.log(token)
+    console.log(token)
     try {
         user = await userModel.findOne({ authToken: token }).exec()
         next()
